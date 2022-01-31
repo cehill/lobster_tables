@@ -1,0 +1,36 @@
+---
+title: "lobsters"
+author: "Chris Hill"
+date: "1/31/2022"
+output: html_document
+---
+## attach libraries
+library(tidyverse)
+library(readxl)
+library(here)
+library(skimr) # install.packages('skimr')
+library(kableExtra) # install.packages('kableExtra')
+## read in data while skipping four header lines
+lobsters <- read_xlsx(here("data/lobsters.xlsx"), skip=4)
+# explore data
+skimr::skim(lobsters)
+# create a pivot table (count lines by year) as a tibble
+lobsters %>%
+  group_by(year) %>%
+  summarize(count_by_year = n())
+#create a pivot table (count lines by site and year) as a tibble
+lobsters %>%
+  group_by(site, year) %>%
+  summarize(count_by_siteyear =  n())
+#create a pivot table summarizing the count and also the mean size by year
+lobsters %>%
+  group_by(site, year) %>%
+  summarize(count_by_siteyear =  n(),
+            mean_size_mm = mean(size_mm))
+#same as above but remove NA's and add stdev calculation
+lobsters %>%
+  group_by(site, year) %>%
+  summarize(count_by_siteyear =  n(), 
+            mean_size_mm = mean(size_mm, na.rm=TRUE), 
+            sd_size_mm = sd(size_mm, na.rm=TRUE))
+            
